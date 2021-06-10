@@ -6,7 +6,7 @@
 /*   By: jjourdan <jjourdan@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/22 10:38:50 by jjourdan          #+#    #+#             */
-/*   Updated: 2021/06/10 11:58:31 by jjourdan         ###   ########lyon.fr   */
+/*   Updated: 2021/06/10 14:25:35 by jjourdan         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,9 @@ int	main(int argc, char **argv)
 	if (!limit)
 		return (kemaexit(NOMEM));
 	if ((argc < 5) || (argc > 6) || (philo_get_limits(limit, argv) != SUCCESS))
-		return(kemaexit(BADARG));
+		return (kemaexit(BADARG));
 	fork = NULL;
-	errnum = philo_create_forks(fork, limit);
+	errnum = philo_create_forks(&fork, limit);
 	if (errnum != SUCCESS)
 		return (kemaexit(ERRMUTEX));
 	philo = NULL;

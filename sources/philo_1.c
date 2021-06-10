@@ -6,7 +6,7 @@
 /*   By: jjourdan <jjourdan@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/09 13:25:49 by jjourdan          #+#    #+#             */
-/*   Updated: 2021/06/10 11:58:14 by jjourdan         ###   ########lyon.fr   */
+/*   Updated: 2021/06/10 14:50:04 by jjourdan         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,12 @@
 
 int	philo_get_limits(t_limits *limit, char **argv)
 {
+	struct timeval	time;
+
+	if (gettimeofday(&time, NULL) != 0)
+		return (ERRTIME);
+	limit->sec0 = time.tv_sec;
+	limit->usec0 = time.tv_usec;
 	limit->nb_philo = ft_atoi(argv[1]);
 	if ((limit->nb_philo == 0) && (argv[1][0] != 0))
 		return (BADARG);
@@ -37,18 +43,18 @@ int	philo_get_limits(t_limits *limit, char **argv)
 	return (SUCCESS);
 }
 
-int	philo_create_forks(pthread_mutex_t **fork, t_limits *limit)
+int	philo_create_forks(pthread_mutex_t ***fork, t_limits *limit)
 {
 	int	i;
 
-	fork = kemalloc(limit->nb_philo, sizeof(pthread_mutex_t *));
-	if (!fork)
+	(*fork) = kemalloc(limit->nb_philo + 1, sizeof(pthread_mutex_t *));
+	if (!(*fork))
 		return (kemaexit(NOMEM));
 	i = -1;
 	while (++i < (limit->nb_philo))
 	{
-		fork[i] = kemalloc(1, sizeof(pthread_mutex_t) + 1);
-		if (pthread_mutex_init(fork[i], NULL) != 0)
+		(*fork)[i] = kemalloc(1, sizeof(pthread_mutex_t));
+		if (pthread_mutex_init((*fork)[i], NULL) != 0)
 			return (ERRMUTEX);
 	}
 	return (SUCCESS);

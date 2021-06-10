@@ -6,7 +6,7 @@
 /*   By: jjourdan <jjourdan@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/22 11:28:31 by jjourdan          #+#    #+#             */
-/*   Updated: 2021/06/10 11:57:24 by jjourdan         ###   ########lyon.fr   */
+/*   Updated: 2021/06/10 14:26:06 by jjourdan         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,17 +37,16 @@
 # define ERRTIME		6
 # define STR_ERRTIME	"Error while retrieving time!"
 
-//	*	structs declarations
+# define THINKING		0
+# define REQ_FORK		1
+# define EATING			2
+# define SLEEPING		3
+# define DIED			4
 
-typedef struct s_philo
-{
-	int					number;
-	uint64_t			sec;
-	useconds_t			usec;
-	int					nb_lunches;
-	int					state; // * 0 = think ; 1 = eat ; 2 = sleep
-	int					nb_fork;
-}	t_philo;
+# define NO_TAKE_FORK	0
+# define TAKE_FORK		1
+
+//	*	structs declarations
 
 typedef struct s_limits
 {
@@ -56,15 +55,28 @@ typedef struct s_limits
 	int					time_to_eat;
 	int					time_to_sleep;
 	int					nb_eat;
+	uint64_t			sec0;
+	useconds_t			usec0;
 }	t_limits;
 
 typedef struct s_arg
 {
-	t_philo				**philo;
 	pthread_mutex_t		**fork;
 	t_limits			*limit;
 	pthread_mutex_t		*wperm;
+	pthread_mutex_t		*death;
 }	t_arg;
+
+typedef struct s_philo
+{
+	int					number;
+	uint64_t			sec;
+	useconds_t			usec;
+	int					nb_lunches;
+	int					state;
+	int					nb_fork;
+	t_arg				*arg;
+}	t_philo;
 
 //	*	functions prototypes
 
@@ -73,11 +85,13 @@ int						main(int argc, char **argv);
 
 //	*	philo_1.c
 int						philo_get_limits(t_limits *limit, char **argv);
-int						philo_create_forks(pthread_mutex_t **fork, t_limits *limit);
+int						philo_create_forks(pthread_mutex_t ***fork, t_limits *limit);
 int						philo_create_philos(t_philo ***philo, t_limits *limit);
 
 //	*	philo_fight.c
 int						philo_start_fight(t_philo **philo, pthread_mutex_t **fork, t_limits *limit);
+int						philo_display(t_philo *philo, int fork_state);
+int						philo_do_state(t_philo *philo);
 void					*philo_routine(void *arg);
 
 #endif

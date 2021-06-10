@@ -6,7 +6,7 @@
 #    By: jjourdan <jjourdan@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/22 10:55:11 by jjourdan          #+#    #+#              #
-#    Updated: 2021/06/10 11:51:58 by jjourdan         ###   ########lyon.fr    #
+#    Updated: 2021/06/10 15:29:13 by jjourdan         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,7 @@
 
 NAME		=	philo_one
 
-ARGS		=	4 4 4 4 4
+ARGS		=	5 800 200 200
 
 CC			=	gcc
 
@@ -85,7 +85,7 @@ norme_check:	fclean
 
 debug:			libraries $(OBJS)
 				$(CC) -I $(INCS_DIR) $(DEBUG_FLAGS) $(OBJS) $(LIBS_FILES) -o $(DEBUG_OUT)
-				printf "\033c"
+				printf "\ec"
 				./$(DEBUG_OUT) $(ARGS)
 
 valgrind:		all
