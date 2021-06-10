@@ -6,7 +6,7 @@
 #    By: jjourdan <jjourdan@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/22 10:55:11 by jjourdan          #+#    #+#              #
-#    Updated: 2021/04/21 17:27:40 by jjourdan         ###   ########lyon.fr    #
+#    Updated: 2021/06/10 11:51:58 by jjourdan         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,9 +20,9 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME		=	my_project
+NAME		=	philo_one
 
-ARGS		=	foo bar
+ARGS		=	4 4 4 4 4
 
 CC			=	gcc
 
@@ -36,13 +36,15 @@ DEBUG_OUT	=	debug.out
 
 INCS_DIR	=	includes/
 
-INCS		=	my_project.h
+INCS		=	philosophers.h
 
 INCS_FULL	=	$(addprefix $(INCS_DIR), $(INCS))
 
 SRCS_DIR	=	sources/
 
-SRCS		=	main.c
+SRCS		=	main.c \
+				philo_1.c \
+				philo_fight.c
 
 SRCS_FULL	=	$(addprefix $(SRCS_DIR), $(SRCS))
 
@@ -64,7 +66,7 @@ all:			libraries $(NAME)
 				$(CC) $(FLAGS) -I $(INCS_DIR) -c $< -o $@
 
 $(NAME): 		$(OBJS)
-				$(CC) -I $(INCS_DIR) $(OBJS) $(LIBS_FILES) -o $(NAME)
+				$(CC) $(FLAGS) -I $(INCS_DIR) $(OBJS) $(LIBS_FILES) -o $(NAME)
 
 libraries:
 				$(foreach lib,$(LIBS_FULL), $(MAKE_SUB) $(lib))

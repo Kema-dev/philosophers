@@ -6,7 +6,7 @@
 /*   By: jjourdan <jjourdan@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/29 08:47:22 by jjourdan          #+#    #+#             */
-/*   Updated: 2021/04/21 18:43:24 by jjourdan         ###   ########lyon.fr   */
+/*   Updated: 2021/06/09 16:58:37 by jjourdan         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,16 +28,12 @@ void	*kemalloc(size_t nmemb, size_t size)
 		return (NULL);
 	elem = ft_calloc(nmemb, size);
 	if (!elem)
-	{
-		errno = ENOMEM;
-		exit(kemaexit(ENOMEM));
-	}
+		return (NULL);
 	new_mem = ft_calloc(1, sizeof(t_list));
 	if (!new_mem)
 	{
 		free (elem);
-		errno = ENOMEM;
-		exit(kemaexit(ENOMEM));
+		return (NULL);
 	}
 	new_mem->content = elem;
 	new_mem->next = NULL;
@@ -94,12 +90,16 @@ void	kemaclear(void)
 
 int	kemaexit(int	errnum)
 {
-	int	ret;
+	char	*tab[15];
 
-	(void)errnum;
+	tab[0] = STR_SUCCESS;
+	tab[1] = STR_FAILURE;
+	tab[2] = STR_BADARG;
+	tab[2] = STR_NOMEM;
+	tab[2] = STR_ERRMUTEX;
+	tab[2] = STR_ERRTHREAD;
+	tab[2] = STR_ERRMUTEX;
 	kemaclear();
-	ret = errno;
-	if (ret)
-		ft_dprintf(STDERR_FILENO, "Error %d : %s\n", ret, strerror(ret));
-	return (ret);
+	ft_dprintf(STDERR_FILENO, "%s\n", tab[errnum]);
+	return (errnum);
 }
