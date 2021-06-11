@@ -6,7 +6,7 @@
 /*   By: jjourdan <jjourdan@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/09 13:25:49 by jjourdan          #+#    #+#             */
-/*   Updated: 2021/06/10 14:50:04 by jjourdan         ###   ########lyon.fr   */
+/*   Updated: 2021/06/11 19:12:13 by jjourdan         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,22 +21,24 @@ int	philo_get_limits(t_limits *limit, char **argv)
 	limit->sec0 = time.tv_sec;
 	limit->usec0 = time.tv_usec;
 	limit->nb_philo = ft_atoi(argv[1]);
-	if ((limit->nb_philo == 0) && (argv[1][0] != 0))
+	if ((limit->nb_philo == 0) && (argv[1][0] != '0'))
 		return (BADARG);
 	limit->time_to_die = ft_atoi(argv[2]);
-	if ((limit->time_to_die == 0) && (argv[2][0] != 0))
+	if ((limit->time_to_die == 0) && (argv[2][0] != '0'))
 		return (BADARG);
 	limit->time_to_eat = ft_atoi(argv[3]);
-	if ((limit->time_to_eat == 0) && (argv[3][0] != 0))
+	if ((limit->time_to_eat == 0) && (argv[3][0] != '0'))
 		return (BADARG);
 	limit->time_to_sleep = ft_atoi(argv[4]);
-	if ((limit->time_to_sleep == 0) && (argv[4][0] != 0))
+	if ((limit->time_to_sleep == 0) && (argv[4][0] != '0'))
 		return (BADARG);
 	if (argv[5])
 	{
 		limit->nb_eat = ft_atoi(argv[5]);
-		if ((limit->nb_eat == 0) && (argv[5][0] != 0))
+		if ((limit->nb_eat == 0) && (argv[5][0] != '0'))
 			return (BADARG);
+		if (limit->nb_eat <= 0)
+			return (NOMEAL);
 	}
 	else
 		limit->nb_eat = INT_MAX;

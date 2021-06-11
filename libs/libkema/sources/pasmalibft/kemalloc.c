@@ -6,7 +6,7 @@
 /*   By: jjourdan <jjourdan@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/29 08:47:22 by jjourdan          #+#    #+#             */
-/*   Updated: 2021/06/11 16:31:02 by jjourdan         ###   ########lyon.fr   */
+/*   Updated: 2021/06/11 19:13:09 by jjourdan         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,15 +90,16 @@ void	kemaclear(void)
 
 int	kemaexit(int	errnum)
 {
-	char	*tab[15];
+	char	*tab[8];
 
-	tab[0] = STR_SUCCESS;
-	tab[1] = STR_FAILURE;
-	tab[2] = STR_BADARG;
-	tab[2] = STR_NOMEM;
-	tab[2] = STR_ERRMUTEX;
-	tab[2] = STR_ERRTHREAD;
-	tab[2] = STR_ERRMUTEX;
+	tab[SUCCESS] = STR_SUCCESS;
+	tab[FAILURE] = STR_FAILURE;
+	tab[BADARG] = STR_BADARG;
+	tab[NOMEM] = STR_NOMEM;
+	tab[ERRMUTEX] = STR_ERRMUTEX;
+	tab[ERRTHREAD] = STR_ERRTHREAD;
+	tab[ERRTIME] = STR_ERRTIME;
+	tab[NOMEAL] = STR_NOMEAL;
 	kemaclear();
 	if (errnum > 1)
 		ft_dprintf(STDERR_FILENO, "%s\n", tab[errnum]);

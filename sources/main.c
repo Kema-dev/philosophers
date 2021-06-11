@@ -6,7 +6,7 @@
 /*   By: jjourdan <jjourdan@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/22 10:38:50 by jjourdan          #+#    #+#             */
-/*   Updated: 2021/06/11 16:31:30 by jjourdan         ###   ########lyon.fr   */
+/*   Updated: 2021/06/11 19:14:18 by jjourdan         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,16 +22,19 @@ int	main(int argc, char **argv)
 	limit = kemalloc(1, sizeof(t_limits));
 	if (!limit)
 		return (kemaexit(NOMEM));
-	if ((argc < 5) || (argc > 6) || (philo_get_limits(limit, argv) != SUCCESS))
+	if ((argc < 5) || (argc > 6))
 		return (kemaexit(BADARG));
+	errnum = philo_get_limits(limit, argv);
+	if (errnum != SUCCESS)
+		return (kemaexit(errnum));
 	fork = NULL;
 	errnum = philo_create_forks(&fork, limit);
 	if (errnum != SUCCESS)
-		return (kemaexit(ERRMUTEX));
+		return (kemaexit(errnum));
 	philo = NULL;
 	errnum = philo_create_philos(&philo, limit);
 	if (errnum != SUCCESS)
-		return (kemaexit(ERRTHREAD));
+		return (kemaexit(errnum));
 	errnum = philo_start_fight(philo, fork, limit);
 	if (errnum != SUCCESS)
 		return (kemaexit(errnum));

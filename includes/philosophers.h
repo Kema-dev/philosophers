@@ -6,7 +6,7 @@
 /*   By: jjourdan <jjourdan@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/22 11:28:31 by jjourdan          #+#    #+#             */
-/*   Updated: 2021/06/11 17:38:26 by jjourdan         ###   ########lyon.fr   */
+/*   Updated: 2021/06/11 19:03:17 by jjourdan         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <pthread.h>
 # include <unistd.h>
 # include <sys/time.h>
+# include <stdint.h>
 # include <limits.h>
 
 //	*	errors handlers
@@ -31,11 +32,13 @@
 # define NOMEM			3
 # define STR_NOMEM		"Not enough memory!"
 # define ERRMUTEX		4
-# define STR_ERRMUTEX		"Error while creating mutexes!"
+# define STR_ERRMUTEX	"Error while creating mutexes!"
 # define ERRTHREAD		5
 # define STR_ERRTHREAD	"Error while creating threads!"
 # define ERRTIME		6
 # define STR_ERRTIME	"Error while retrieving time!"
+# define NOMEAL			7
+# define STR_NOMEAL		"Provided number of meals is null or negative!"
 
 # define THINKING		0
 # define REQ_FORK		1

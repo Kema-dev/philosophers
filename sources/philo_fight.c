@@ -6,7 +6,7 @@
 /*   By: jjourdan <jjourdan@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/09 16:45:55 by jjourdan          #+#    #+#             */
-/*   Updated: 2021/06/11 17:51:24 by jjourdan         ###   ########lyon.fr   */
+/*   Updated: 2021/06/11 19:16:34 by jjourdan         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,25 +49,30 @@ int	philo_start_fight(t_philo **philo, pthread_mutex_t **fork, t_limits *limit)
 			return (ERRTHREAD);
 		usleep(50);
 	}
-	if (limit->nb_philo < INT_MAX)
+	i = 0;
+	while (i < limit->nb_philo)
 	{
-		i = -1;
-		while (++i < limit->nb_philo)
+		if (philo[i]->state == SATIATED)
 		{
-			if (pthread_join(tid[i], NULL) != SUCCESS)
-				return (ERRTHREAD);
+			i = -1;
+			while (++i < limit->nb_philo)
+			{
+				if (philo[i]->state != SATIATED)
+					break ;
+			}
+			if (i == limit->nb_philo)
+			{
+				usleep(150);
+				return (SUCCESS);
+			}
 		}
-	}
-	else
-	{
-		i = 0;
-		while (i < limit->nb_philo)
+		else if (philo[i]->state == DIED)
 		{
-			if (philo[i]->state == DIED)
-				return (DIED);
-			i++;
-			i = i % limit->nb_philo;
+			usleep(150);
+			return (SUCCESS);
 		}
+		i++;
+		i = i % limit->nb_philo;
 	}
 	return (SUCCESS);
 }
@@ -80,7 +85,7 @@ int	philo_display(t_philo *philo, int fork_state)
 	if (gettimeofday(&time, NULL) != 0)
 		return (ERRTIME);
 	time_disp = (time.tv_sec * 1000000 + time.tv_usec \
-				- philo->arg->limit->sec0 * 1000000 - philo->arg->limit->usec0) / 1000;
+		- philo->arg->limit->sec0 * 1000000 - philo->arg->limit->usec0) / 1000;
 	if (pthread_mutex_lock(philo->arg->wperm) != SUCCESS)
 		return (ERRMUTEX);
 	if (fork_state != NO_TAKE_FORK)
@@ -125,22 +130,17 @@ int	philo_do_state(t_philo *philo)
 		philo_display(philo, TAKE_FORK);
 		philo->state += 1;
 		philo_display(philo, NO_TAKE_FORK);
-		usleep(philo->arg->limit->time_to_eat * 1000);
 		if (gettimeofday(&time, NULL) != 0)
 			return (ERRTIME);
+		philo->sec = time.tv_sec;
+		philo->usec = time.tv_usec;
+		usleep(philo->arg->limit->time_to_eat * 1000);
 		philo->nb_lunches += 1;
 		if (philo->nb_lunches >= philo->arg->limit->nb_eat)
 		{
 			philo->state = SATIATED;
 			philo_display(philo, NO_TAKE_FORK);
-			if (pthread_mutex_unlock(philo->arg->fork[philo->number % philo->arg->limit->nb_philo]) != SUCCESS)
-				return (ERRMUTEX);
-			if (pthread_mutex_unlock(philo->arg->fork[philo->number - 1]) != SUCCESS)
-				return (ERRMUTEX);
-			return (SUCCESS);
 		}
-		philo->sec = time.tv_sec;
-		philo->usec = time.tv_usec;
 		if (pthread_mutex_unlock(philo->arg->fork[philo->number % philo->arg->limit->nb_philo]) != SUCCESS)
 			return (ERRMUTEX);
 		if (pthread_mutex_unlock(philo->arg->fork[philo->number - 1]) != SUCCESS)
