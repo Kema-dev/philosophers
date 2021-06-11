@@ -6,7 +6,7 @@
 #    By: jjourdan <jjourdan@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/01/11 11:26:11 by jjourdan          #+#    #+#              #
-#    Updated: 2021/04/22 13:59:36 by jjourdan         ###   ########lyon.fr    #
+#    Updated: 2021/06/11 16:43:41 by jjourdan         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,7 +39,7 @@ INC_FULL	=	$(addprefix $(INC_DIR), $(INCLUDES))
 
 SRCS_DIR	=	sources/
 
-LIBFT_DIR	=	libft/
+LIBFT_DIR	=	pasmalibft/
 
 LIBFT_SRCS	=	ft_putchar.c \
 				ft_strlen.c \

@@ -6,7 +6,7 @@
 /*   By: jjourdan <jjourdan@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/09 16:45:55 by jjourdan          #+#    #+#             */
-/*   Updated: 2021/06/10 15:52:03 by jjourdan         ###   ########lyon.fr   */
+/*   Updated: 2021/06/11 17:39:36 by jjourdan         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,12 @@ int	philo_start_fight(t_philo **philo, pthread_mutex_t **fork, t_limits *limit)
 		if (pthread_create(&tid, NULL, &philo_routine, \
 					(void *)philo[i]) != SUCCESS)
 			return (ERRTHREAD);
-		if (pthread_detach(tid) != SUCCESS)
+		usleep(50);
+	}
+	i = -1;
+	while (++i < limit->nb_philo)
+	{
+		if (pthread_join(tid, NULL) != SUCCESS)
 			return (ERRTHREAD);
 	}
 	return (SUCCESS);
@@ -62,19 +67,21 @@ int	philo_display(t_philo *philo, int fork_state)
 	if (pthread_mutex_lock(philo->arg->wperm) != SUCCESS)
 		return (ERRMUTEX);
 	if (fork_state != NO_TAKE_FORK)
-		ft_dprintf(STDOUT_FILENO, "%ld philo %d has taken a fork\n", time_disp, philo->number);
+		ft_dprintf(STDOUT_FILENO, "\e[94m%5ld\e[0m philo \e[91m%d\e[0m has taken a fork\n", time_disp, philo->number);
 	else
 	{
 		if (philo->state == THINKING)
-			ft_dprintf(STDOUT_FILENO, "%ld philo %d is thinking\n", time_disp, philo->number);
+			ft_dprintf(STDOUT_FILENO, "\e[94m%5ld\e[0m philo \e[91m%d\e[0m is thinking\n", time_disp, philo->number);
 		else if (philo->state == REQ_FORK)
-			ft_dprintf(STDOUT_FILENO, "%ld philo %d is eating\n", time_disp, philo->number);
+			ft_dprintf(STDOUT_FILENO, "\e[94m%5ld\e[0m philo \e[91m%d\e[0m is thinking\n", time_disp, philo->number);
 		else if (philo->state == EATING)
-			ft_dprintf(STDOUT_FILENO, "%ld philo %d is eating\n", time_disp, philo->number);
+			ft_dprintf(STDOUT_FILENO, "\e[94m%5ld\e[0m philo \e[91m%d\e[0m is eating\n", time_disp, philo->number);
 		else if (philo->state == SLEEPING)
-			ft_dprintf(STDOUT_FILENO, "%ld philo %d is sleeping\n", time_disp, philo->number);
+			ft_dprintf(STDOUT_FILENO, "\e[94m%5ld\e[0m philo \e[91m%d\e[0m is sleeping\n", time_disp, philo->number);
 		else if (philo->state == DIED)
-			ft_dprintf(STDOUT_FILENO, "%ld philo %d has died\n", time_disp, philo->number);
+			ft_dprintf(STDOUT_FILENO, "\e[94m%5ld\e[0m philo \e[91m%d\e[0m has died\n", time_disp, philo->number);
+		else if (philo->state == SATIATED)
+			ft_dprintf(STDOUT_FILENO, "\e[94m%5ld\e[0m philo \e[91m%d\e[0m is satiated, he already ate %d times !\n", time_disp, philo->number, philo->nb_lunches);
 	}
 	if (pthread_mutex_unlock(philo->arg->wperm) != SUCCESS)
 		return (ERRMUTEX);
@@ -86,9 +93,13 @@ int	philo_do_state(t_philo *philo)
 	struct timeval	time;
 
 	if (philo->state == SLEEPING)
+	{
+		philo_display(philo, NO_TAKE_FORK);
 		usleep(philo->arg->limit->time_to_sleep * 1000);
+	}
 	else if (philo->state == REQ_FORK)
 	{
+		philo_display(philo, NO_TAKE_FORK);
 		if (pthread_mutex_lock(philo->arg->fork[philo->number - 1]) != SUCCESS)
 			return (ERRMUTEX);
 		philo_display(philo, TAKE_FORK);
@@ -96,18 +107,30 @@ int	philo_do_state(t_philo *philo)
 			return (ERRMUTEX);
 		philo_display(philo, TAKE_FORK);
 		philo->state += 1;
+		philo_display(philo, NO_TAKE_FORK);
 		usleep(philo->arg->limit->time_to_eat * 1000);
-		philo->state += 1;
 		if (gettimeofday(&time, NULL) != 0)
 			return (ERRTIME);
+		philo->nb_lunches += 1;
+		if (philo->nb_lunches >= philo->arg->limit->nb_eat)
+		{
+			philo->state = SATIATED;
+			philo_display(philo, NO_TAKE_FORK);
+			if (pthread_mutex_unlock(philo->arg->fork[philo->number % philo->arg->limit->nb_philo]) != SUCCESS)
+				return (ERRMUTEX);
+			if (pthread_mutex_unlock(philo->arg->fork[philo->number - 1]) != SUCCESS)
+				return (ERRMUTEX);
+			return (SUCCESS);
+		}
 		philo->sec = time.tv_sec;
 		philo->usec = time.tv_usec;
-		philo->nb_lunches += 1;
 		if (pthread_mutex_unlock(philo->arg->fork[philo->number % philo->arg->limit->nb_philo]) != SUCCESS)
 			return (ERRMUTEX);
 		if (pthread_mutex_unlock(philo->arg->fork[philo->number - 1]) != SUCCESS)
 			return (ERRMUTEX);
 	}
+	else if (philo->state == DIED)
+		philo_display(philo, NO_TAKE_FORK);
 	return (SUCCESS);
 }
 
@@ -118,7 +141,7 @@ void	*philo_routine(void *philos)
 	long			time_since;
 
 	philo = (t_philo *)philos;
-	while (philo->state != DIED)
+	while ((philo->state != DIED) && (philo->state != SATIATED))
 	{
 		if (pthread_mutex_lock(philo->arg->death) != SUCCESS)
 			return ((void *)ERRMUTEX);
@@ -129,13 +152,13 @@ void	*philo_routine(void *philos)
 		time_since = (time.tv_sec * 1000000 + time.tv_usec \
 					- philo->sec * 1000000 - philo->usec) / 1000;
 		philo->state = (philo->state + 1) % 4;
-		philo_do_state(philo);
 		if (time_since >= philo->arg->limit->time_to_die)
+		{
+			if (pthread_mutex_lock(philo->arg->death) != SUCCESS)
+				return ((void *)ERRMUTEX);
 			philo->state = DIED;
-		philo_display(philo, NO_TAKE_FORK);
+		}
+		philo_do_state(philo);
 	}
-	if (pthread_mutex_lock(philo->arg->death) != SUCCESS)
-		return ((void *)ERRMUTEX);
-	kemaexit(FAILURE);
-	return ((void *)SUCCESS);
+	return ((void *)FAILURE);
 }

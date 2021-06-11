@@ -6,7 +6,7 @@
 /*   By: jjourdan <jjourdan@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/22 11:28:31 by jjourdan          #+#    #+#             */
-/*   Updated: 2021/06/10 14:26:06 by jjourdan         ###   ########lyon.fr   */
+/*   Updated: 2021/06/11 17:38:26 by jjourdan         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@
 # define EATING			2
 # define SLEEPING		3
 # define DIED			4
+# define SATIATED		5
 
 # define NO_TAKE_FORK	0
 # define TAKE_FORK		1
@@ -89,6 +90,7 @@ int						philo_create_forks(pthread_mutex_t ***fork, t_limits *limit);
 int						philo_create_philos(t_philo ***philo, t_limits *limit);
 
 //	*	philo_fight.c
+int						philo_last_ops(t_limits *limit, t_philo **philo, t_arg *args);
 int						philo_start_fight(t_philo **philo, pthread_mutex_t **fork, t_limits *limit);
 int						philo_display(t_philo *philo, int fork_state);
 int						philo_do_state(t_philo *philo);
