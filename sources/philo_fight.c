@@ -6,7 +6,7 @@
 /*   By: jjourdan <jjourdan@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/09 16:45:55 by jjourdan          #+#    #+#             */
-/*   Updated: 2021/06/11 17:39:36 by jjourdan         ###   ########lyon.fr   */
+/*   Updated: 2021/06/11 17:51:24 by jjourdan         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int	philo_start_fight(t_philo **philo, pthread_mutex_t **fork, t_limits *limit)
 {
 	pthread_mutex_t	*death;
 	pthread_mutex_t	*wperm;
-	pthread_t		tid;
+	pthread_t		*tid;
 	int				i;
 	t_arg			*args;
 
@@ -37,20 +37,37 @@ int	philo_start_fight(t_philo **philo, pthread_mutex_t **fork, t_limits *limit)
 	args->limit = limit;
 	args->wperm = wperm;
 	args->death = death;
+	tid = kemalloc(limit->nb_philo + 1, sizeof(pthread_t));
+	if (!tid)
+		return (NOMEM);
 	i = -1;
 	while (++i < limit->nb_philo)
 	{
 		philo[i]->arg = args;
-		if (pthread_create(&tid, NULL, &philo_routine, \
+		if (pthread_create(&tid[i], NULL, &philo_routine, \
 					(void *)philo[i]) != SUCCESS)
 			return (ERRTHREAD);
 		usleep(50);
 	}
-	i = -1;
-	while (++i < limit->nb_philo)
+	if (limit->nb_philo < INT_MAX)
 	{
-		if (pthread_join(tid, NULL) != SUCCESS)
-			return (ERRTHREAD);
+		i = -1;
+		while (++i < limit->nb_philo)
+		{
+			if (pthread_join(tid[i], NULL) != SUCCESS)
+				return (ERRTHREAD);
+		}
+	}
+	else
+	{
+		i = 0;
+		while (i < limit->nb_philo)
+		{
+			if (philo[i]->state == DIED)
+				return (DIED);
+			i++;
+			i = i % limit->nb_philo;
+		}
 	}
 	return (SUCCESS);
 }
