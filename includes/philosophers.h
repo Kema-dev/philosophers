@@ -6,7 +6,7 @@
 /*   By: jjourdan <jjourdan@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/22 11:28:31 by jjourdan          #+#    #+#             */
-/*   Updated: 2021/06/11 19:03:17 by jjourdan         ###   ########lyon.fr   */
+/*   Updated: 2021/06/12 16:04:13 by jjourdan         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
 # define FAILURE		1
 # define STR_FAILURE	"Operation failure!"
 # define BADARG			2
-# define STR_BADARG		"Please correctly provide number_of_philosophers, time_to_die, time_to_eat, time_to_sleep, and maybe number_of_times_each_philosopher_must_eat!"
+# define STR_BADARG		"Please correctly provide number_of_philosophers (>= 1), time_to_die (>= 0), time_to_eat (>= 0), time_to_sleep (>= 0), and maybe number_of_times_each_philosopher_must_eat (>= 0)!"
 # define NOMEM			3
 # define STR_NOMEM		"Not enough memory!"
 # define ERRMUTEX		4
@@ -68,7 +68,6 @@ typedef struct s_arg
 	pthread_mutex_t		**fork;
 	t_limits			*limit;
 	pthread_mutex_t		*wperm;
-	pthread_mutex_t		*death;
 }	t_arg;
 
 typedef struct s_philo
@@ -94,8 +93,12 @@ int						philo_create_philos(t_philo ***philo, t_limits *limit);
 
 //	*	philo_fight.c
 int						philo_last_ops(t_limits *limit, t_philo **philo, t_arg *args);
+int						philo_start_fight_2(t_limits *limit, t_philo **philo, t_arg *args);
+int						philo_start_fight_3(t_limits *limit, t_philo **philo);
 int						philo_start_fight(t_philo **philo, pthread_mutex_t **fork, t_limits *limit);
+void					philo_display_2(t_philo *philo, long time_disp);
 int						philo_display(t_philo *philo, int fork_state);
+int						philo_do_state_2(t_philo *philo);
 int						philo_do_state(t_philo *philo);
 void					*philo_routine(void *arg);
 
