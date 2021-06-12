@@ -6,7 +6,7 @@
 #    By: jjourdan <jjourdan@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/22 10:55:11 by jjourdan          #+#    #+#              #
-#    Updated: 2021/06/11 18:51:41 by jjourdan         ###   ########lyon.fr    #
+#    Updated: 2021/06/12 15:07:29 by jjourdan         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,9 +20,9 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME		=	philo_one
+NAME		=	philo
 
-ARGS		=	4 310 200 100
+ARGS		=	4 350 200 100 2
 #	*	nb philo / time to die / time to eat / time to sleep - nb times must eat
 
 CC			=	gcc

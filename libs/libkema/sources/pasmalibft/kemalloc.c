@@ -6,7 +6,7 @@
 /*   By: jjourdan <jjourdan@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/29 08:47:22 by jjourdan          #+#    #+#             */
-/*   Updated: 2021/06/11 19:13:09 by jjourdan         ###   ########lyon.fr   */
+/*   Updated: 2021/06/12 15:09:35 by jjourdan         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,7 @@ int	kemaexit(int	errnum)
 	tab[ERRTHREAD] = STR_ERRTHREAD;
 	tab[ERRTIME] = STR_ERRTIME;
 	tab[NOMEAL] = STR_NOMEAL;
+	usleep(50);
 	kemaclear();
 	if (errnum > 1)
 		ft_dprintf(STDERR_FILENO, "%s\n", tab[errnum]);
