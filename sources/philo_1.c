@@ -6,7 +6,7 @@
 /*   By: jjourdan <jjourdan@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/09 13:25:49 by jjourdan          #+#    #+#             */
-/*   Updated: 2021/06/12 15:12:48 by jjourdan         ###   ########lyon.fr   */
+/*   Updated: 2021/06/12 15:15:15 by jjourdan         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,10 @@ int	philo_get_limits(t_limits *limit, char **argv)
 	if (limit->nb_philo <= 1)
 		return (BADARG);
 	limit->time_to_die = ft_atoi(argv[2]);
-	if (limit->time_to_die <= 0)
-		return (BADARG);
 	limit->time_to_eat = ft_atoi(argv[3]);
-	if (limit->time_to_eat <= 0)
-		return (BADARG);
 	limit->time_to_sleep = ft_atoi(argv[4]);
-	if (limit->time_to_sleep <= 0)
+	if ((limit->time_to_sleep <= 0) || (limit->time_to_eat <= 0) || \
+			(limit->time_to_die <= 0))
 		return (BADARG);
 	if (argv[5])
 	{

@@ -6,7 +6,7 @@
 /*   By: jjourdan <jjourdan@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/09 16:45:55 by jjourdan          #+#    #+#             */
-/*   Updated: 2021/06/12 15:09:10 by jjourdan         ###   ########lyon.fr   */
+/*   Updated: 2021/06/12 15:25:17 by jjourdan         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,21 +89,21 @@ int	philo_display(t_philo *philo, int fork_state)
 	if (pthread_mutex_lock(philo->arg->wperm) != SUCCESS)
 		return (ERRMUTEX);
 	if (fork_state != NO_TAKE_FORK)
-		ft_dprintf(STDOUT_FILENO, "\e[94m%5ld\e[0m philo \e[91m%d\e[0m has taken a fork\n", time_disp, philo->number);
+		ft_dprintf(STDOUT_FILENO, "%s%5ld%s philo %s%d%s has taken a fork\n", LIGHT_BLUE, time_disp, DEFAULT, LIGHT_RED, philo->number, DEFAULT);
 	else
 	{
 		if (philo->state == THINKING)
-			ft_dprintf(STDOUT_FILENO, "\e[94m%5ld\e[0m philo \e[91m%d\e[0m is thinking\n", time_disp, philo->number);
+			ft_dprintf(STDOUT_FILENO, "%s%5ld%s philo %s%d%s is thinking\n", LIGHT_BLUE, time_disp, DEFAULT, LIGHT_RED, philo->number, DEFAULT);
 		else if (philo->state == REQ_FORK)
-			ft_dprintf(STDOUT_FILENO, "\e[94m%5ld\e[0m philo \e[91m%d\e[0m is thinking\n", time_disp, philo->number);
+			ft_dprintf(STDOUT_FILENO, "%s%5ld%s philo %s%d%s is thinking\n", LIGHT_BLUE, time_disp, DEFAULT, LIGHT_RED, philo->number, DEFAULT);
 		else if (philo->state == EATING)
-			ft_dprintf(STDOUT_FILENO, "\e[94m%5ld\e[0m philo \e[91m%d\e[0m is eating\n", time_disp, philo->number);
+			ft_dprintf(STDOUT_FILENO, "%s%5ld%s philo %s%d%s is eating\n", LIGHT_BLUE, time_disp, DEFAULT, LIGHT_RED, philo->number, DEFAULT);
 		else if (philo->state == SLEEPING)
-			ft_dprintf(STDOUT_FILENO, "\e[94m%5ld\e[0m philo \e[91m%d\e[0m is sleeping\n", time_disp, philo->number);
+			ft_dprintf(STDOUT_FILENO, "%s%5ld%s philo %s%d%s is sleeping\n", LIGHT_BLUE, time_disp, DEFAULT, LIGHT_RED, philo->number, DEFAULT);
 		else if (philo->state == DIED)
-			ft_dprintf(STDOUT_FILENO, "\e[94m%5ld\e[0m philo \e[91m%d\e[0m has died\n", time_disp, philo->number);
+			ft_dprintf(STDOUT_FILENO, "%s%5ld%s philo %s%d%s has died\n", LIGHT_BLUE, time_disp, DEFAULT, LIGHT_RED, philo->number, DEFAULT);
 		else if (philo->state == SATIATED)
-			ft_dprintf(STDOUT_FILENO, "\e[94m%5ld\e[0m philo \e[91m%d\e[0m is satiated, he already ate %d times !\n", time_disp, philo->number, philo->nb_lunches);
+			ft_dprintf(STDOUT_FILENO, "%s%5ld%s philo %s%d%s is satiated, he already ate %d times !\n", LIGHT_BLUE, time_disp, DEFAULT, LIGHT_RED, philo->number, DEFAULT, philo->nb_lunches);
 	}
 	if (pthread_mutex_unlock(philo->arg->wperm) != SUCCESS)
 		return (ERRMUTEX);
@@ -162,8 +162,6 @@ void	*philo_routine(void *philos)
 	{
 		if (pthread_mutex_lock(philo->arg->death) != SUCCESS)
 			return ((void *)ERRMUTEX);
-		if (pthread_mutex_unlock(philo->arg->death) != SUCCESS)
-			return ((void *)ERRMUTEX);
 		if (gettimeofday(&time, NULL) != 0)
 			return ((void *)ERRTIME);
 		time_since = (time.tv_sec * 1000000 + time.tv_usec \
@@ -171,11 +169,13 @@ void	*philo_routine(void *philos)
 		philo->state = (philo->state + 1) % 4;
 		if (time_since >= philo->arg->limit->time_to_die)
 		{
-			if (pthread_mutex_lock(philo->arg->death) != SUCCESS)
-				return ((void *)ERRMUTEX);
+			//if (pthread_mutex_lock(philo->arg->death) != SUCCESS)
+			//	return ((void *)ERRMUTEX);
 			philo->state = DIED;
 		}
 		philo_do_state(philo);
+		if (pthread_mutex_unlock(philo->arg->death) != SUCCESS)
+			return ((void *)ERRMUTEX);
 	}
 	return ((void *)FAILURE);
 }
